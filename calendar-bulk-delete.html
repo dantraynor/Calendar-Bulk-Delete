@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar Bulk Delete</title>
+    <meta name="description" content="Efficiently bulk delete Google Calendar events with advanced filtering. Perfect for Google Workspace users and productivity enthusiasts.">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Zen+Dots&display=swap');
+
+        :root {
+            --bg-gradient: radial-gradient(circle at top right, #05070f 0%, #01040d 50%, #000206 100%);
+            --grid-color: rgba(0, 247, 255, 0.08);
+            --panel-bg: rgba(4, 10, 22, 0.92);
+            --panel-border: rgba(0, 247, 255, 0.35);
+            --panel-glow: 0 0 50px rgba(0, 247, 255, 0.18), 0 0 120px rgba(255, 198, 0, 0.12);
+            --accent-teal: #00f5ff;
+            --accent-gold: #f5f3ce;
+            --text-main: #eef8ff;
+            --text-muted: rgba(238, 248, 255, 0.72);
+            --divider: rgba(0, 247, 255, 0.18);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Zen Dots', 'Trebuchet MS', 'Lucida Grande', 'Verdana', 'Arial', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 80px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(90deg, transparent 0, var(--grid-color) 1px),
+                              linear-gradient(0deg, transparent 0, var(--grid-color) 1px);
+            background-size: 60px 60px;
+            opacity: 0.28;
+            mix-blend-mode: lighten;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1), transparent 55%);
+            pointer-events: none;
+        }
+
+        .scanline {
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.03) 0,
+                rgba(255, 255, 255, 0.03) 1px,
+                transparent 2px,
+                transparent 4px
+            );
+            mix-blend-mode: soft-light;
+            pointer-events: none;
+            animation: scan 6s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { text-shadow: 0 0 6px rgba(0, 245, 255, 0.6); opacity: 0.88; }
+            50% { text-shadow: 0 0 18px rgba(245, 243, 206, 0.85); opacity: 1; }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.22); }
+        }
+
+        .shell {
+            width: min(1100px, 100%);
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 20px;
+            padding: 46px 44px;
+            box-shadow: var(--panel-glow);
+            backdrop-filter: blur(14px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::before,
+        .panel::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.45;
+            pointer-events: none;
+        }
+
+        .panel::before {
+            width: 220px;
+            height: 220px;
+            top: -120px;
+            right: -100px;
+            background: radial-gradient(circle, rgba(0, 245, 255, 0.42), transparent 60%);
+        }
+
+        .panel::after {
+            width: 180px;
+            height: 180px;
+            bottom: -100px;
+            left: -90px;
+            background: radial-gradient(circle, rgba(245, 243, 206, 0.4), transparent 60%);
+        }
+
+        .panel > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 16px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, rgba(0, 245, 255, 0.18), rgba(245, 229, 124, 0.24));
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            font-size: 0.7rem;
+            margin-bottom: 20px;
+        }
+
+        .badge::before {
+            content: "★";
+            color: var(--accent-teal);
+            font-size: 0.9rem;
+            animation: twinkle 2.6s infinite;
+        }
+
+        .hero {
+            text-align: center;
+        }
+
+        .hero-title {
+            margin: 0;
+            font-size: clamp(3.1rem, 6vw, 4.6rem);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-family: 'Orbitron', 'Zen Dots', sans-serif;
+            background: linear-gradient(90deg, #00f5ff 0%, #ff71ce 45%, #f5f3ce 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 18px rgba(0, 245, 255, 0.4)) drop-shadow(0 0 30px rgba(245, 243, 206, 0.25));
+        }
+
+        .hero-title span {
+            opacity: 0.9;
+            background: inherit;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tagline {
+            margin: 18px auto 26px;
+            max-width: 620px;
+            font-size: 1.08rem;
+            color: rgba(245, 243, 206, 0.78);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            animation: glowPulse 4.4s ease-in-out infinite;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            justify-content: center;
+            margin-bottom: 26px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 13px 30px;
+            border-radius: 999px;
+            border: 1px solid rgba(0, 245, 255, 0.45);
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.22), rgba(245, 229, 124, 0.32));
+            color: var(--text-main);
+            text-decoration: none;
+            letter-spacing: 0.1em;
+            font-size: 0.84rem;
+            text-transform: uppercase;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 0 18px rgba(0, 245, 255, 0.22);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 26px rgba(0, 245, 255, 0.48);
+        }
+
+        .btn.secondary {
+            background: rgba(3, 8, 20, 0.7);
+            border-color: rgba(245, 229, 124, 0.38);
+        }
+
+        .hero-meta {
+            display: flex;
+            justify-content: center;
+            gap: 22px;
+            flex-wrap: wrap;
+            font-size: 0.78rem;
+            letter-spacing: 0.14em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .hero-meta span::before {
+            content: "■";
+            margin-right: 8px;
+            color: var(--accent-teal);
+        }
+
+        .ticker {
+            margin-top: 6px;
+            border: 1px solid rgba(0, 245, 255, 0.32);
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(10, 18, 46, 0.78);
+            position: relative;
+        }
+
+        .ticker::before {
+            content: "MODULE STATUS";
+            position: absolute;
+            top: 10px;
+            left: 18px;
+            font-size: 0.68rem;
+            letter-spacing: 0.1em;
+            color: rgba(245, 243, 206, 0.65);
+        }
+
+        .ticker-track {
+            display: flex;
+            gap: 46px;
+            padding: 26px 0 12px;
+            animation: tickerScroll 20s linear infinite;
+            white-space: nowrap;
+            font-size: 0.92rem;
+            color: rgba(0, 245, 255, 0.85);
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+        }
+
+        @keyframes tickerScroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        .panel-title {
+            font-size: 1.9rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            color: var(--accent-teal);
+            text-align: center;
+        }
+
+        .panel-subtitle {
+            text-align: center;
+            max-width: 620px;
+            margin: 0 auto 34px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: 0.98rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 26px;
+        }
+
+        .feature-card {
+            padding: 28px 26px;
+            border-radius: 18px;
+            background: rgba(3, 8, 20, 0.82);
+            border: 1px solid rgba(0, 245, 255, 0.28);
+            box-shadow: inset 0 0 18px rgba(0, 245, 255, 0.12);
+            position: relative;
+            overflow: hidden;
+            min-height: 180px;
+        }
+
+        .feature-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent 0%, rgba(245, 229, 124, 0.18) 45%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            font-size: 2.4rem;
+            margin-bottom: 18px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.05rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--accent-teal);
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.94rem;
+            line-height: 1.7;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+        }
+
+        .step-card {
+            padding: 32px 26px 28px;
+            border-radius: 18px;
+            background: rgba(3, 7, 18, 0.78);
+            border: 1px solid rgba(0, 245, 255, 0.26);
+            box-shadow: inset 0 0 16px rgba(0, 245, 255, 0.1);
+            position: relative;
+        }
+
+        .step-index {
+            position: absolute;
+            top: -18px;
+            left: 24px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.5), rgba(245, 229, 124, 0.6));
+            color: #051227;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+        }
+
+        .step-card h3 {
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            color: var(--accent-teal);
+        }
+
+        .step-card p {
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: 0.94rem;
+        }
+
+        .cta-panel {
+            text-align: center;
+        }
+
+        .cta-panel .panel-title {
+            margin-bottom: 18px;
+        }
+
+        .cta-panel p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 30px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 26px;
+        }
+
+        .cta-buttons .btn {
+            min-width: 240px;
+        }
+
+        .cta-meta {
+            font-size: 0.82rem;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .cta-meta strong {
+            color: var(--accent-gold);
+        }
+
+        footer.panel {
+            text-align: center;
+        }
+
+        .footer-brand {
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            margin-bottom: 22px;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .footer-nav a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .footer-nav a:hover {
+            color: var(--accent-teal);
+        }
+
+        .footnote {
+            color: var(--text-muted);
+            font-size: 0.76rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 720px) {
+            body {
+                padding: 60px 16px;
+            }
+
+            .panel {
+                padding: 36px 26px;
+            }
+
+            .hero-actions {
+                gap: 14px;
+            }
+
+            .btn {
+                width: 100%;
+                font-size: 0.78rem;
+                letter-spacing: 0.12em;
+            }
+
+            .ticker-track {
+                animation-duration: 26s;
+            }
+
+            .panel-title {
+                font-size: 1.6rem;
+            }
+
+            .panel-subtitle {
+                font-size: 0.92rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanline" aria-hidden="true"></div>
+    
+    <!-- Breadcrumb Navigation -->
+    <nav style="padding: 16px 32px; background: rgba(15, 18, 48, 0.9); border-bottom: 1px solid var(--panel-border);">
+        <div class="container" style="display: flex; align-items: center; gap: 12px; font-size: 0.9rem;">
+            <a href="/" style="color: var(--neon-blue); text-decoration: none;">🏠 Tesseras</a>
+            <span style="color: #666;">/</span>
+            <span style="color: #fff;">Calendar Bulk Delete</span>
+        </div>
+    </nav>
+    
+    <main class="shell">
+        <header class="panel hero">
+            <span class="badge">Calendar Operations Module v1.0</span>
+            <h1 class="hero-title">Calendar <span>Bulk Delete</span></h1>
+            <p class="tagline">Efficiently manage Google Calendar clean-up routines.</p>
+
+            <div class="hero-actions">
+                <a class="btn" href="https://chrome.google.com/webstore/search/calendar%20bulk%20delete" target="_blank" rel="noreferrer">Install Extension</a>
+                <a class="btn secondary" href="https://github.com/tesseras/calendar-bulk-delete" target="_blank" rel="noreferrer">View Source Code</a>
+            </div>
+
+            <div class="hero-meta">
+                <span>Secure OAuth 2.0 flow</span>
+                <span>Google Workspace ready</span>
+                <span>Optimized for high-volume events</span>
+            </div>
+
+            <div class="ticker" aria-hidden="true">
+                <div class="ticker-track">
+                    <span>Bulk Deletion Engine Online</span>
+                    <span>Adaptive Rate Limiting Engaged</span>
+                    <span>Advanced Filters Initialized</span>
+                    <span>Support Channel: support@tesseras.org</span>
+                    <span>Bulk Deletion Engine Online</span>
+                    <span>Adaptive Rate Limiting Engaged</span>
+                    <span>Advanced Filters Initialized</span>
+                    <span>Support Channel: support@tesseras.org</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="panel">
+            <h2 class="panel-title">Ease of Use</h2>
+            <p class="panel-subtitle">Deploy the exact tool you need to tame overflowing calendars and reclaim your time.</p>
+
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <h3>Bulk Delete</h3>
+                    <p>Select events across views and clear them in a single confirmed action—no more endless clicking.</p>
+                </article>
+
+                <article class="feature-card">
+                    <h3>Advanced Filtering</h3>
+                    <p>Filter by date range, keywords, or event specifics to target exactly what should stay and what should go.</p>
+                </article>
+
+                <article class="feature-card">
+                    <h3>Workspace Approved</h3>
+                    <p>Designed for enterprise Google Workspace tenants, respecting organizational policies and admin expectations.</p>
+                </article>
+
+                <article class="feature-card">
+                    <h3>Secure OAuth</h3>
+                    <p>Leverages Google's official OAuth 2.0 identity flow—tokens stay within Chrome, credentials stay secured locally.</p>
+                </article>
+
+                <article class="feature-card">
+                    <h3>Adaptive Speed</h3>
+                    <p>Smart rate limiting keeps API calls moving fast without tripping quota alarms or hitting throttling walls.</p>
+                </article>
+
+                <article class="feature-card">
+                    <h3>Native Interface</h3>
+                    <p>Works seamlessly with Google Calendar's UI with a bulk delete button and guided dialog.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2 class="panel-title">Launch Sequence</h2>
+            <p class="panel-subtitle">Follow the activation path to use the tool.</p>
+
+            <div class="steps-grid">
+                <article class="step-card">
+                    <div class="step-index">1</div>
+                    <h3>Install Extension</h3>
+                    <p>Grab Calendar Bulk Delete from the Chrome Web Store to activate browser-level access.</p>
+                </article>
+
+                <article class="step-card">
+                    <div class="step-index">2</div>
+                    <h3>Authenticate</h3>
+                    <p>Authorize via Google OAuth so the extension can audit and manage events without exposing credentials.</p>
+                </article>
+
+                <article class="step-card">
+                    <div class="step-index">3</div>
+                    <h3>Navigate to Calendar</h3>
+                    <p>Head to calendar.google.com and locate the new Bulk Delete icon residing alongside the native toolbar.</p>
+                </article>
+
+            </div>
+        </section>
+
+        <section class="panel cta-panel" id="download">
+            <h2 class="panel-title">Deploy the Extension</h2>
+
+            <div class="cta-buttons">
+                <a class="btn" href="https://chrome.google.com/webstore/search/calendar%20bulk%20delete" target="_blank" rel="noreferrer">📥 Install from Chrome Web Store</a>
+                <a class="btn secondary" href="https://github.com/tesseras/calendar-bulk-delete" target="_blank" rel="noreferrer">📂 Explore Source on GitHub</a>
+            </div>
+
+            <p class="cta-meta"><strong>Requirements:</strong> Chromium Based Browser • Google Calendar • OAuth 2.0 consent</p>
+        </section>
+
+        <footer class="panel">
+            <div class="footer-brand">Tesseras Systems // Productivity that feels the pulse</div>
+            <nav class="footer-nav">
+                <a href="/">Home</a>
+                <a href="/privacy-policy.html">Privacy Policy</a>
+                <a href="mailto:support@tesseras.org">Support</a>
+                <a href="https://chrome.google.com/webstore/search/tesseras" target="_blank" rel="noreferrer">Extensions</a>
+            </nav>
+            <p class="footnote">© 2025 Tesseras. All rights reserved.</p>
+        </footer>
+    </main>
+</body>
+</html>

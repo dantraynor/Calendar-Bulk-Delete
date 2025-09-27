@@ -8,8 +8,10 @@
     "test:watch": "jest --watch",
     "lint": "eslint . --ext .js",
     "lint:fix": "eslint . --ext .js --fix",
-    "package": "zip -r calendar-bulk-event-manager.zip . -x 'node_modules/*' '.git/*' '*.zip' 'package-lock.json' '.eslintcache' 'coverage/*' 'test/*' 'public/*'",
+    "package": "zip -r calendar-bulk-event-manager.zip . -x 'node_modules/*' '.git/*' '*.zip' 'package-lock.json' '.eslintcache' 'coverage/*' 'test/*' 'public/*' 'index.html' 'calendar-bulk-delete.html' 'privacy-policy.html' 'README.md' '.gitignore'",
+    "build:web": "rm -rf public && mkdir -p public/icons && cp index.html calendar-bulk-delete.html privacy-policy.html public/ && cp -r icons/ public/icons/",
     "dev:serve": "python3 -m http.server 8000",
+    "dev:web": "npm run build:web && cd public && python3 -m http.server 8080",
     "validate": "web-ext lint --source-dir=.",
     "start:firefox": "web-ext run --source-dir=."
   },

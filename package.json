@@ -8,7 +8,7 @@
     "test:watch": "jest --watch",
     "lint": "eslint . --ext .js",
     "lint:fix": "eslint . --ext .js --fix",
-    "package": "zip -r calendar-bulk-event-manager.zip . -x 'node_modules/*' '.git/*' '*.zip' 'package-lock.json' '.eslintcache' 'coverage/*' '__tests__/*'",
+    "package": "zip -r calendar-bulk-event-manager.zip . -x 'node_modules/*' '.git/*' '*.zip' 'package-lock.json' '.eslintcache' 'coverage/*' 'test/*' 'public/*'",
     "dev:serve": "python3 -m http.server 8000",
     "validate": "web-ext lint --source-dir=.",
     "start:firefox": "web-ext run --source-dir=."

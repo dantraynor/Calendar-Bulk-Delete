@@ -1,0 +1,85 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Operating System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Chrome extension development
+*.crx
+*.pem
+*.zip
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Backup files
+*.backup
+*.bak
+*.old
+
+# Personal notes
+TODO.md
+NOTES.md
+PERSONAL.md
+DEVELOPMENT.md
+CLEAN_SLATE_SETUP.md
+TESSERAS_DEPLOYMENT.md
+WORKSPACE_INTEGRATION.md
+PROJECT_TRANSFER.md
+INSTALLATION.md
+PRIVACY_DEPLOYMENT.md
+SITE_MAP.md
+
+# OAuth setup scripts
+setup-tesseras-oauth.sh
+
+

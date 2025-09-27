@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Calendar Bulk Delete</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Zen+Dots&display=swap');
+
+        :root {
+            --bg-gradient: radial-gradient(circle at top right, #05070f 0%, #01040d 50%, #000206 100%);
+            --grid-color: rgba(0, 247, 255, 0.08);
+            --panel-bg: rgba(4, 10, 22, 0.92);
+            --panel-border: rgba(0, 247, 255, 0.28);
+            --panel-glow: 0 0 42px rgba(0, 247, 255, 0.16), 0 0 90px rgba(255, 198, 0, 0.12);
+            --accent-teal: #00f5ff;
+            --accent-gold: #f5f3ce;
+            --text-main: #eef8ff;
+            --text-muted: rgba(238, 248, 255, 0.72);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Zen Dots', 'Trebuchet MS', 'Verdana', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 80px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(90deg, transparent 0, var(--grid-color) 1px),
+                              linear-gradient(0deg, transparent 0, var(--grid-color) 1px);
+            background-size: 60px 60px;
+            opacity: 0.28;
+            mix-blend-mode: lighten;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1), transparent 55%);
+            pointer-events: none;
+        }
+
+        .scanline {
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.03) 0,
+                rgba(255, 255, 255, 0.03) 1px,
+                transparent 2px,
+                transparent 4px
+            );
+            mix-blend-mode: soft-light;
+            pointer-events: none;
+            animation: scan 6s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .panel {
+            width: min(880px, 100%);
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 20px;
+            box-shadow: var(--panel-glow);
+            padding: 56px 48px 40px;
+            backdrop-filter: blur(14px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::before,
+        .panel::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.45;
+            pointer-events: none;
+        }
+
+        .panel::before {
+            width: 220px;
+            height: 220px;
+            top: -120px;
+            right: -110px;
+            background: radial-gradient(circle, rgba(0, 245, 255, 0.4), transparent 60%);
+        }
+
+        .panel::after {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            left: -120px;
+            background: radial-gradient(circle, rgba(245, 243, 206, 0.4), transparent 60%);
+        }
+
+        .panel > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-family: 'Orbitron', 'Zen Dots', sans-serif;
+            background: linear-gradient(90deg, #00f5ff 0%, #ff71ce 45%, #f5f3ce 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 18px rgba(0, 245, 255, 0.35));
+            margin-bottom: 14px;
+        }
+
+        h2 {
+            color: var(--accent-teal);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin: 32px 0 12px;
+            font-size: 1.2rem;
+        }
+
+        h3 {
+            color: var(--accent-gold);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin: 24px 0 10px;
+            font-size: 1rem;
+        }
+
+        .last-updated {
+            color: var(--text-muted);
+            font-style: italic;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 26px;
+        }
+
+        p {
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+
+        ul {
+            margin: 12px 0 20px 22px;
+            padding-left: 10px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        a {
+            color: var(--accent-teal);
+        }
+
+        .section {
+            margin: 20px 0;
+        }
+
+        .footer-nav {
+            border-top: 1px solid rgba(0, 245, 255, 0.18);
+            margin-top: 40px;
+            padding-top: 24px;
+            text-align: center;
+        }
+
+        .footer-nav a {
+            color: var(--accent-teal);
+            text-decoration: none;
+            margin: 0 16px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .footer-nav a:hover {
+            color: var(--accent-gold);
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 40px 16px;
+            }
+
+            .panel {
+                padding: 42px 24px 32px;
+            }
+
+            h1 {
+                font-size: 2.1rem;
+                letter-spacing: 0.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanline" aria-hidden="true"></div>
+    <main class="panel">
+        <h1>Privacy Policy for Calendar Bulk Delete</h1>
+        <p class="last-updated">Last updated: September 24, 2025</p>
+
+        <div class="section">
+            <h2>Introduction</h2>
+            <p>This Privacy Policy describes how the Calendar Bulk Delete Chrome extension ("we", "our", or "the extension") collects, uses, and protects your information when you use our service.</p>
+        </div>
+
+        <div class="section">
+            <h2>Information We Collect</h2>
+            <h3>Google Calendar Data</h3>
+            <p>Our extension accesses your Google Calendar events solely for the purpose of:</p>
+            <ul>
+                <li>Displaying events in the current calendar view</li>
+                <li>Allowing you to select and delete multiple events at once</li>
+                <li>Providing filtering options for bulk operations</li>
+            </ul>
+
+            <h3>Authentication Information</h3>
+            <p>We use Google OAuth 2.0 to authenticate with your Google account. We do not store your Google credentials. Authentication tokens are managed securely by Chrome's identity API.</p>
+
+            <h3>Local Storage</h3>
+            <p>The extension may store minimal user preferences locally in your browser, such as:</p>
+            <ul>
+                <li>Authentication status</li>
+                <li>User interface preferences</li>
+                <li>Extension settings</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>How We Use Your Information</h2>
+            <p>Your calendar data is used exclusively to:</p>
+            <ul>
+                <li>Display events for selection and bulk operations</li>
+                <li>Execute bulk delete operations as requested by you</li>
+                <li>Provide filtering and search functionality</li>
+            </ul>
+            <p><strong>We do not:</strong></p>
+            <ul>
+                <li>Store your calendar events on external servers</li>
+                <li>Share your calendar data with third parties</li>
+                <li>Use your data for advertising or analytics</li>
+                <li>Access calendars other than those you explicitly grant permission to</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Data Security</h2>
+            <p>We implement appropriate security measures to protect your information:</p>
+            <ul>
+                <li>All communication with Google APIs uses HTTPS encryption</li>
+                <li>Authentication tokens are managed by Chrome's secure identity system</li>
+                <li>No calendar data is transmitted to external servers</li>
+                <li>Local storage is limited to your browser environment</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Third-Party Services</h2>
+            <p>This extension interacts with:</p>
+            <ul>
+                <li><strong>Google Calendar API:</strong> To read and delete your calendar events</li>
+                <li><strong>Google OAuth 2.0:</strong> For secure authentication</li>
+            </ul>
+            <p>Please review Google's Privacy Policy at <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a> for information about how Google handles your data.</p>
+        </div>
+
+        <div class="section">
+            <h2>Your Rights</h2>
+            <p>You have the right to:</p>
+            <ul>
+                <li>Revoke access to your Google Calendar at any time through Google Account settings</li>
+                <li>Uninstall the extension to stop all data access</li>
+                <li>Clear local extension data through Chrome's extension management</li>
+            </ul>
+            <p>This extension is designed for general audiences and is not intended for children under 13. We do not knowingly collect personal information from children under 13.</p>
+        </div>
+
+        <div class="section">
+            <h2>Data Retention</h2>
+            <p>We do not retain your calendar event data. Events are accessed temporarily for display and operations, then immediately discarded. Local preferences are stored until you uninstall the extension or clear browser data.</p>
+        </div>
+
+        <div class="section">
+            <h2>Changes to This Privacy Policy</h2>
+            <p>We may update this Privacy Policy from time to time. We will notify users of any material changes by updating the "Last updated" date at the top of this policy.</p>
+        </div>
+
+        <div class="section">
+            <h2>Contact Information</h2>
+            <p>This extension is developed and maintained by Tesseras.</p>
+            <p>If you have any questions about this Privacy Policy or our privacy practices, please contact us at:</p>
+            <ul>
+                <li>Email: support@tesseras.org</li>
+                <li>Website: https://tesseras.org (coming soon)</li>
+                <li>Support: Through the Chrome Web Store support channel for this extension</li>
+            </ul>
+            <p>For enterprise deployments and Google Workspace integration, please contact: support@tesseras.org</p>
+        </div>
+
+        <div class="footer-nav">
+            <p style="margin-bottom: 16px;">
+                <a href="/">← Back to Tesseras</a>
+                <a href="/calendar-bulk-delete.html">Calendar Bulk Delete</a>
+                <a href="mailto:support@tesseras.org">Contact Support</a>
+            </p>
+        </div>
+    </main>
+</body>
+</html>

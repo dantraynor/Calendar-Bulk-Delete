@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tesseras // Future Retro Productivity</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Zen+Dots&display=swap');
+
+        :root {
+            --bg-gradient: radial-gradient(circle at top right, #05070f 0%, #01040d 50%, #000206 100%);
+            --grid-color: rgba(0, 247, 255, 0.08);
+            --panel-bg: rgba(4, 10, 22, 0.92);
+            --panel-border: rgba(0, 247, 255, 0.35);
+            --panel-glow: 0 0 50px rgba(0, 247, 255, 0.18), 0 0 120px rgba(255, 198, 0, 0.12);
+            --vaporwave-gradient: linear-gradient(90deg, #00f5ff 0%, #ff71ce 50%, #f5f3ce 100%);
+            --accent-teal: #00f5ff;
+            --accent-gold: #f5f3ce;
+            --text-main: #eef8ff;
+            --text-muted: rgba(238, 248, 255, 0.72);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Zen Dots', 'Trebuchet MS', 'Lucida Grande', 'Verdana', 'Arial', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(90deg, transparent 0, var(--grid-color) 1px),
+                              linear-gradient(0deg, transparent 0, var(--grid-color) 1px);
+            background-size: 60px 60px;
+            opacity: 0.28;
+            mix-blend-mode: lighten;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.08), transparent 55%);
+            pointer-events: none;
+        }
+
+        .scanline {
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.03) 0,
+                rgba(255, 255, 255, 0.03) 1px,
+                transparent 2px,
+                transparent 4px
+            );
+            mix-blend-mode: soft-light;
+            pointer-events: none;
+            animation: scan 6s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .container {
+            width: min(960px, 100%);
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 18px;
+            box-shadow: var(--panel-glow);
+            padding: 48px 42px 32px;
+            backdrop-filter: blur(14px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before,
+        .container::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(0);
+            opacity: 0.45;
+            pointer-events: none;
+        }
+
+        .container::before {
+            width: 280px;
+            height: 280px;
+            top: -140px;
+            right: -120px;
+            background: radial-gradient(circle, rgba(0, 245, 255, 0.45), transparent 60%);
+        }
+
+        .container::after {
+            width: 220px;
+            height: 220px;
+            bottom: -110px;
+            left: -140px;
+            background: radial-gradient(circle, rgba(245, 243, 206, 0.4), transparent 60%);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, rgba(0, 245, 255, 0.18), rgba(245, 229, 124, 0.24));
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            font-size: 0.68rem;
+            margin-bottom: 18px;
+        }
+
+        .badge::before {
+            content: "★";
+            color: var(--accent-teal);
+            font-size: 0.9rem;
+            animation: twinkle 2.4s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .hero {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .neon-title {
+            font-size: clamp(2.8rem, 6vw, 4.2rem);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin: 0;
+            font-family: 'Orbitron', 'Zen Dots', sans-serif;
+            background: var(--vaporwave-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 0 16px rgba(0, 245, 255, 0.4)) drop-shadow(0 0 30px rgba(245, 243, 206, 0.25));
+        }
+
+        .neon-title span {
+            opacity: 0.9;
+        }
+
+        .tagline {
+            margin: 16px auto 24px;
+            max-width: 520px;
+            font-size: 1.05rem;
+            color: rgba(245, 243, 206, 0.78);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            animation: glowPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { text-shadow: 0 0 6px rgba(0, 245, 255, 0.6); opacity: 0.88; }
+            50% { text-shadow: 0 0 18px rgba(245, 243, 206, 0.85); opacity: 1; }
+        }
+
+        .ticker {
+            margin: 28px 0 40px;
+            border: 1px solid rgba(156, 255, 111, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(12, 22, 48, 0.75);
+            position: relative;
+        }
+
+        .ticker::before {
+            content: "SYSTEM STATUS";
+            position: absolute;
+            top: 8px;
+            left: 14px;
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            color: rgba(156, 255, 111, 0.65);
+        }
+
+        .ticker-track {
+            display: flex;
+            gap: 40px;
+            padding: 22px 0 10px;
+            animation: tickerScroll 18s linear infinite;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            color: rgba(156, 255, 111, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+        }
+
+        @keyframes tickerScroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin: 22px auto 0;
+            max-width: 560px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 28px;
+            border-radius: 999px;
+            border: 1px solid rgba(0, 245, 255, 0.45);
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.22), rgba(245, 229, 124, 0.32));
+            color: var(--text-main);
+            text-decoration: none;
+            letter-spacing: 0.1em;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 0 18px rgba(0, 245, 255, 0.22);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 26px rgba(0, 245, 255, 0.48);
+        }
+
+        .product-grid {
+            margin-top: 46px;
+            display: grid;
+            gap: 26px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-card {
+            padding: 26px 24px;
+            border-radius: 16px;
+            background: rgba(3, 8, 20, 0.82);
+            border: 1px solid rgba(0, 245, 255, 0.28);
+            box-shadow: inset 0 0 22px rgba(0, 245, 255, 0.12);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent 0%, rgba(245, 229, 124, 0.2) 45%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .product-card:hover::before {
+            opacity: 1;
+        }
+
+        .product-card h3 {
+            font-size: 1.1rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin: 0 0 12px;
+            color: var(--accent-teal);
+        }
+
+        .product-card p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 52px;
+            padding-top: 26px;
+            border-top: 1px solid rgba(0, 245, 255, 0.2);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer strong {
+            color: var(--accent-gold);
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 20px;
+            }
+
+            .container {
+                padding: 36px 22px 28px;
+            }
+
+            .btn-group {
+                gap: 12px;
+            }
+
+            .btn {
+                width: 100%;
+                font-size: 0.78rem;
+                letter-spacing: 0.12em;
+            }
+
+            .ticker-track {
+                animation-duration: 24s;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanline" aria-hidden="true"></div>
+    <div class="container">
+        <div class="hero">
+            <span class="badge">Tesseras Control Panel v1.0</span>
+            <h1 class="neon-title">Tesseras</h1>
+            <p class="tagline">Finding solutions for productivity</p>
+
+            <div class="btn-group">
+                <a class="btn" href="/calendar-bulk-delete.html">Calendar Bulk Delete</a>
+                <a class="btn" href="mailto:support@tesseras.org">Contact Support</a>
+                <a class="btn" href="https://chrome.google.com/webstore/search/tesseras" target="_blank" rel="noreferrer">Chrome Extensions</a>
+                <a class="btn" href="/privacy-policy.html">Privacy Policy</a>
+            </div>
+        </div>
+
+        <div class="ticker">
+            <div class="ticker-track">
+                <span>Productivity Matrix Online</span>
+                <span>Calendar Bulk Delete v1.0</span>
+                <span>More Integrations Uploading Soon</span>
+                <span>Support Channel: support@tesseras.org</span>
+                <span>Productivity Matrix Online</span>
+                <span>Calendar Bulk Delete v1.0</span>
+                <span>More Integrations Uploading Soon</span>
+                <span>Support Email: support@tesseras.org</span>
+            </div>
+        </div>
+
+        <div class="product-grid">
+            <div class="product-card">
+                <h3>Cal Bulk Delete</h3>
+                <p>Execute Google Cal clean-up sequences without a million clicks.</p>
+            </div>
+
+            <div class="product-card">
+                <h3>Pipeline Launchpad</h3>
+                <p>A suite of automation modules designed to accelerate your defeat of the mundane.</p>
+            </div>
+
+            <div class="product-card">
+                <h3>Trust & Signal</h3>
+                <p>OAuth flows stay encrypted. Secure by design. Your data never leaves your own orbit.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            &copy; 2025 <strong>Tesseras</strong> // Productivity systems that feel the pulse
+        </div>
+    </div>
+</body>
+</html>

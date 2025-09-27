@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar Bulk Event Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            width: 380px;
+            min-height: 500px;
+            background: #ffffff;
+            color: #202124;
+        }
+
+        .header {
+            background: #1a73e8;
+            color: white;
+            padding: 16px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .auth-section {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .auth-status {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .auth-status.authenticated {
+            background: #e8f5e8;
+            color: #137333;
+            border: 1px solid #ceead6;
+        }
+
+        .auth-status.not-authenticated {
+            background: #fce8e6;
+            color: #d93025;
+            border: 1px solid #f9c7c4;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #1a73e8;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1557b0;
+        }
+
+        .btn-secondary {
+            background: #f1f3f4;
+            color: #3c4043;
+        }
+
+        .btn-secondary:hover {
+            background: #e8eaed;
+        }
+
+        .btn-danger {
+            background: #d93025;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b52d20;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .stats-section {
+            margin: 24px 0;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .stats-title {
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a73e8;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #5f6368;
+            margin-top: 4px;
+        }
+
+        .actions-section {
+            margin: 24px 0;
+        }
+
+        .action-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e8eaed;
+        }
+
+        .action-item:last-child {
+            border-bottom: none;
+        }
+
+        .action-desc {
+            flex: 1;
+            margin-right: 12px;
+        }
+
+        .action-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .action-subtitle {
+            font-size: 12px;
+            color: #5f6368;
+        }
+
+        .footer {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid #e8eaed;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .footer-link {
+            font-size: 12px;
+            color: #1a73e8;
+            text-decoration: none;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+        .version {
+            font-size: 11px;
+            color: #9aa0a6;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #e8eaed;
+            border-top: 2px solid #1a73e8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #e8f5e8;
+            color: #137333;
+            border: 1px solid #ceead6;
+        }
+
+        .alert-error {
+            background: #fce8e6;
+            color: #d93025;
+            border: 1px solid #f9c7c4;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 16px 0;
+        }
+
+        .quick-action-btn {
+            padding: 8px 12px;
+            font-size: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Calendar Bulk Event Manager</h1>
+    </div>
+
+    <div class="content">
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Loading...</p>
+        </div>
+
+        <div id="main-content">
+            <div class="auth-section">
+                <div id="auth-status" class="auth-status">
+                    Checking authentication...
+                </div>
+                <button id="auth-btn" class="btn btn-primary" style="display: none;">
+                    Sign in with Google
+                </button>
+                <button id="revoke-btn" class="btn btn-secondary" style="display: none;">
+                    Sign out
+                </button>
+            </div>
+
+            <div id="stats-section" class="stats-section" style="display: none;">
+                <div class="stats-title">Current Calendar View</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div id="event-count" class="stat-value">0</div>
+                        <div class="stat-label">Events</div>
+                    </div>
+                    <div class="stat-item">
+                        <div id="last-update" class="stat-value">--</div>
+                        <div class="stat-label">Last Updated</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="actions-section" class="actions-section" style="display: none;">
+                <div class="action-item">
+                    <div class="action-desc">
+                        <div class="action-title">Open Calendar</div>
+                        <div class="action-subtitle">Go to Google Calendar</div>
+                    </div>
+                    <button id="open-calendar-btn" class="btn btn-secondary">Open</button>
+                </div>
+                
+                <div class="action-item">
+                    <div class="action-desc">
+                        <div class="action-title">Bulk Delete Events</div>
+                        <div class="action-subtitle">Delete multiple events at once</div>
+                    </div>
+                    <button id="bulk-delete-btn" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+
+            <div id="quick-actions" class="quick-actions" style="display: none;">
+                <button id="refresh-btn" class="btn btn-secondary quick-action-btn">
+                    Refresh Data
+                </button>
+                <button id="settings-btn" class="btn btn-secondary quick-action-btn">
+                    Settings
+                </button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-links">
+                <a href="#" id="help-link" class="footer-link">Help</a>
+                <a href="#" id="privacy-link" class="footer-link">Privacy</a>
+                <a href="#" id="feedback-link" class="footer-link">Feedback</a>
+            </div>
+            <div class="version" id="version-info">v1.0.0</div>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

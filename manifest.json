@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Calendar Bulk Delete",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Efficiently bulk delete Google Calendar events with advanced filtering for Google Workspace and individual users",
   "author": "Tesseras",
   "homepage_url": "https://tesseras.org/calendar-bulk-delete.html",

@@ -13,7 +13,11 @@
     "dev:serve": "python3 -m http.server 8000",
     "dev:web": "npm run build:web && cd public && python3 -m http.server 8080",
     "validate": "web-ext lint --source-dir=.",
-    "start:firefox": "web-ext run --source-dir=."
+    "start:firefox": "web-ext run --source-dir=.",
+    "use:dev": "cp manifest.dev.json manifest.json",
+    "use:prod": "cp manifest.prod.json manifest.json",
+    "package:dev": "npm run use:dev && npm run package",
+    "package:prod": "npm run use:prod && npm run package"
   },
   "keywords": [
     "chrome-extension",

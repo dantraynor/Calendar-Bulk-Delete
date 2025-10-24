@@ -6,6 +6,13 @@
 class MessageRouter {
   constructor() {
     this.authManager = new AuthManager();
+    try {
+      const manifest = chrome.runtime.getManifest?.() || {};
+      // eslint-disable-next-line no-console
+      console.log('[Calendar Bulk Delete] Extension ID:', chrome.runtime.id, 'oauth2.client_id:', manifest?.oauth2?.client_id);
+    } catch (e) {
+      // ignore logging errors
+    }
     this.init();
   }
 
@@ -212,7 +219,15 @@ class AuthManager {
         scopes: ['https://www.googleapis.com/auth/calendar.events']
       }, (token) => {
         if (chrome.runtime.lastError) {
-          reject(new Error(chrome.runtime.lastError.message));
+          const baseMsg = chrome.runtime.lastError.message || 'Unknown authentication error';
+          const manifest = chrome.runtime.getManifest?.() || {};
+          const extId = chrome.runtime.id;
+          const manifestClientId = manifest?.oauth2?.client_id || 'unset';
+          let hint = `Chrome Identity failed. Extension ID: ${extId}. Manifest oauth2.client_id: ${manifestClientId}.`;
+          if (/custom uri scheme|invalid_request/i.test(baseMsg)) {
+            hint += ' Ensure your OAuth client in Google Cloud is of type "Chrome app/extension" and its Application ID exactly matches your Web Store extension ID. If you recently changed clients, update the manifest, republish, then in Chrome visit chrome://extensions → Update, and clear token cache in chrome://identity-internals.';
+          }
+          reject(new Error(`${baseMsg} | ${hint}`));
         } else {
           resolve(token);
         }

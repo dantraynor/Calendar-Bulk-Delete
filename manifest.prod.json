@@ -1,50 +1,50 @@
 {
   "manifest_version": 3,
-  "name": "Calendar Bulk Delete (DEV)",
+  "name": "Calendar Bulk Delete",
   "version": "1.0.0",
-  "description": "DEV build for testing Google Calendar bulk delete",
+  "description": "Efficiently bulk delete Google Calendar events with advanced filtering for Google Workspace and individual users",
   "author": "Tesseras",
   "homepage_url": "https://tesseras.org/calendar-bulk-delete.html",
-
+  
   "permissions": [
     "activeTab",
     "storage",
     "identity",
     "tabs"
   ],
-
+  
   "host_permissions": [
     "https://calendar.google.com/*",
     "https://www.googleapis.com/*",
     "https://accounts.google.com/*"
   ],
-
+  
   "background": {
     "service_worker": "background.js"
   },
-
+  
   "content_scripts": [{
     "matches": ["https://calendar.google.com/*"],
     "js": ["content.js"],
     "run_at": "document_idle"
   }],
-
+  
   "action": {
     "default_popup": "popup.html",
     "default_title": "Calendar Bulk Delete"
   },
-
+  
   "oauth2": {
     "client_id": "61315760650-5ugtouefm5q5fmeat97qdt53lvmqf114.apps.googleusercontent.com",
     "scopes": [
       "https://www.googleapis.com/auth/calendar.events"
     ]
   },
-
+  
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self';"
   },
-
+  
   "icons": {
     "16": "icons/icon-16.png",
     "32": "icons/icon-32.png",
